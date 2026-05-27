@@ -15,6 +15,38 @@ This sample catalog intentionally uses placeholders instead of real account-spec
 
 Before using this catalog in a real environment, replace the placeholders with values that match your account and naming conventions.
 
+## Recommended Variable Management
+
+For real use, the more standard approach is:
+
+- keep policy and preflight files as templates in Git
+- keep environment-specific values in a YAML values file
+- render concrete JSON and YAML per environment before running `policyctl`
+
+Recommended structure:
+
+```text
+policy-catalog/
+  values/
+    gov.yaml
+  templates/
+    spectro-vertex-least-privilege.json.tmpl
+    preflight.yaml.tmpl
+  rendered/
+    gov/
+      spectro-vertex-least-privilege.json
+      preflight.yaml
+```
+
+Why this is preferred over a raw `.env` file:
+
+- easier to review in pull requests
+- clearer for multi-environment catalogs
+- less dependent on shell state
+- better for CI pipelines
+
+If you want the lightest-weight option, `.env` plus `envsubst` is still a reasonable fallback, but YAML values files are usually easier to maintain over time.
+
 ## Layout
 
 - `environments/gov/preflight.yaml`: live fail-fast IAM preflight checks
