@@ -1,0 +1,425 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VertexKmsDataPlane",
+      "Effect": "Allow",
+      "Action": [
+        "kms:CreateGrant",
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:GenerateDataKey",
+        "kms:GenerateDataKeyWithoutPlaintext",
+        "kms:ListGrants",
+        "kms:ReEncryptFrom",
+        "kms:ReEncryptTo"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:kms:us-gov-west-1:102015676567:key/11111111-2222-3333-4444-555555555555"
+      ]
+    },
+    {
+      "Sid": "VertexCloudWatchMetrics",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:PutMetricData",
+        "cloudwatch:DescribeAlarmsForMetric",
+        "cloudwatch:DescribeAlarmHistory",
+        "cloudwatch:DescribeAlarms",
+        "cloudwatch:ListMetrics",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:GetInsightRuleReport"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexXRay",
+      "Effect": "Allow",
+      "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexQueueAccess",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage",
+        "sqs:SendMessage"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:sqs:us-gov-west-1:102015676567:vertex-*"
+      ]
+    },
+    {
+      "Sid": "VertexDynamoLeaderRegistry",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:dynamodb:us-gov-west-1:102015676567:table/vertex-*-AWSEBWorkerCronLeaderRegistry"
+      ]
+    },
+    {
+      "Sid": "VertexLogsWrite",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:PutLogEvents",
+        "logs:GetLogEvents",
+        "logs:GetLogGroupFields",
+        "logs:StartQuery",
+        "logs:StopQuery",
+        "logs:GetQueryResults"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:logs:us-gov-west-1:102015676567:log-group:/aws/spectrocloud/vertex*",
+        "arn:aws-us-gov:logs:us-gov-west-1:102015676567:log-group:/aws/spectrocloud/vertex*:*"
+      ]
+    },
+    {
+      "Sid": "DenyRestrictedLogGroups",
+      "Effect": "Deny",
+      "Action": "logs:*",
+      "Resource": [
+        "arn:aws-us-gov:logs:*:*:log-group:Cloudtrail*",
+        "arn:aws-us-gov:logs:*:*:log-group:CudaLOGS*",
+        "arn:aws-us-gov:logs:*:*:log-group:vpc*"
+      ]
+    },
+    {
+      "Sid": "VertexRdsOps",
+      "Effect": "Allow",
+      "Action": [
+        "rds:DescribeDBInstances",
+        "rds:ListTagsForResource",
+        "rds:ModifyDBInstance"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:rds:us-gov-west-1:102015676567:db:vertex-*"
+      ]
+    },
+    {
+      "Sid": "VertexGetInstanceProfile",
+      "Effect": "Allow",
+      "Action": "iam:GetInstanceProfile",
+      "Resource": [
+        "arn:aws-us-gov:iam::102015676567:instance-profile/vertex-*"
+      ]
+    },
+    {
+      "Sid": "VertexAssumeElasticLogstash",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "arn:aws-us-gov:iam::102015676567:role/elastic-logstash-sqs"
+    }
+  ]
+}
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VertexECSAgent",
+      "Effect": "Allow",
+      "Action": [
+        "ecs:Poll",
+        "ecs:StartTask",
+        "ecs:StopTask",
+        "ecs:DiscoverPollEndpoint",
+        "ecs:StartTelemetrySession",
+        "ecs:RegisterContainerInstance",
+        "ecs:DeregisterContainerInstance",
+        "ecs:DescribeContainerInstances",
+        "ecs:Submit*",
+        "ecs:DescribeTasks"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexECRRead",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:DescribeRepositories",
+        "ecr:ListImages",
+        "ecr:DescribeImages",
+        "ecr:BatchGetImage"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:ecr:us-gov-west-1:102015676567:repository/vertex/*"
+      ]
+    },
+    {
+      "Sid": "VertexComputeInfra",
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:DescribeAutoScalingGroups",
+        "autoscaling:DescribeAutoScalingInstances",
+        "autoscaling:DescribeLaunchConfigurations",
+        "autoscaling:DescribeTags",
+        "autoscaling:SetDesiredCapacity",
+        "autoscaling:UpdateAutoScalingGroup",
+        "autoscaling:TerminateInstanceInAutoScalingGroup",
+        "ec2:DescribeAccountAttributes",
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceAttribute",
+        "ec2:ModifyInstanceAttribute",
+        "ec2:DescribeInstanceStatus",
+        "ec2:DescribeLaunchTemplateVersions",
+        "ec2:AssignPrivateIpAddresses",
+        "ec2:AttachNetworkInterface",
+        "ec2:CreateNetworkInterface",
+        "ec2:DeleteNetworkInterface",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DescribeInstanceTypes",
+        "ec2:DetachNetworkInterface",
+        "ec2:ModifyNetworkInterfaceAttribute",
+        "ec2:UnassignPrivateIpAddresses",
+        "ec2:DescribeRegions",
+        "ec2:DescribeRouteTables",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVolumeStatus",
+        "ec2:DescribeVolumeAttribute",
+        "ec2:DescribeTags",
+        "ec2:CreateTags",
+        "ec2:DeleteTags",
+        "ec2:CreateVolume",
+        "ec2:ModifyVolume",
+        "ec2:AttachVolume",
+        "ec2:DeleteVolume",
+        "ec2:DetachVolume",
+        "ec2:DescribeVpcs",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:RevokeSecurityGroupIngress",
+        "ec2:CreateSecurityGroup",
+        "ec2:DeleteSecurityGroup",
+        "ec2:CreateSnapshot",
+        "ec2:DeleteSnapshot",
+        "ec2:DescribeSnapshots",
+        "iam:ListInstanceProfiles",
+        "iam:ListServerCertificates",
+        "iam:GetServerCertificate",
+        "elasticloadbalancing:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexTaggedSecretsRead",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:ListSecrets",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:secretsmanager:us-gov-west-1:102015676567:secret:vertex/*"
+      ],
+      "Condition": {
+        "ForAnyValue:StringEquals": {
+          "secretsmanager:ResourceTag/MISSION_SYSTEM_OWNED": "true"
+        }
+      }
+    },
+    {
+      "Sid": "VertexEC2Messages",
+      "Effect": "Allow",
+      "Action": [
+        "ec2messages:AcknowledgeMessage",
+        "ec2messages:DeleteMessage",
+        "ec2messages:FailMessage",
+        "ec2messages:GetEndpoint",
+        "ec2messages:GetMessages",
+        "ec2messages:SendReply"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexSSMManagedNode",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:DescribeAssociation",
+        "ssm:GetDeployablePatchSnapshotForInstance",
+        "ssm:GetDocument",
+        "ssm:GetManifest",
+        "ssm:GetParameterHistory",
+        "ssm:GetParametersByPath",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:ListAssociations",
+        "ssm:ListInstanceAssociations",
+        "ssm:PutInventory",
+        "ssm:PutComplianceItems",
+        "ssm:PutConfigurePackageResult",
+        "ssm:UpdateAssociationStatus",
+        "ssm:UpdateInstanceAssociationStatus",
+        "ssm:UpdateInstanceInformation",
+        "ssm:PutParameter",
+        "ssm:AddTagsToResource",
+        "ssm:DescribeDocument"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexS3ReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:s3:::vertex-*",
+        "arn:aws-us-gov:s3:::vertex-*/*"
+      ]
+    },
+    {
+      "Sid": "DenyRestrictedBuckets",
+      "Effect": "Deny",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws-us-gov:s3:::common*",
+        "arn:aws-us-gov:s3:::common-*/*",
+        "arn:aws-us-gov:s3:::cloudtrail*",
+        "arn:aws-us-gov:s3:::cloudtrail*/*",
+        "arn:aws-us-gov:s3:::config*",
+        "arn:aws-us-gov:s3:::config*/*",
+        "arn:aws-us-gov:s3:::ec2-ccewincert*",
+        "arn:aws-us-gov:s3:::ec2-ccewincert*/*",
+        "arn:aws-us-gov:s3:::ec2-stigscriptbucket*",
+        "arn:aws-us-gov:s3:::ec2-stigscriptbucket*/*"
+      ]
+    },
+    {
+      "Sid": "VertexSnsPublish",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": [
+        "arn:aws-us-gov:sns:us-gov-west-1:102015676567:vertex-*"
+      ]
+    }
+  ]
+}
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VertexPassECSTaskRole",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": [
+        "arn:aws-us-gov:iam::102015676567:role/aws-ecs-tasks-role"
+      ]
+    }
+  ]
+}
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VertexEFSFileSystems",
+      "Effect": "Allow",
+      "Action": "elasticfilesystem:*",
+      "Resource": [
+        "arn:aws-us-gov:elasticfilesystem:us-gov-west-1:102015676567:file-system/fs-vertex*"
+      ]
+    },
+    {
+      "Sid": "VertexEFSDescribe",
+      "Effect": "Allow",
+      "Action": [
+        "elasticfilesystem:DescribeAccessPoints",
+        "elasticfilesystem:DescribeFileSystems",
+        "elasticfilesystem:DescribeMountTargets"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexEFSCreateAccessPoint",
+      "Effect": "Allow",
+      "Action": "elasticfilesystem:CreateAccessPoint",
+      "Resource": "*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/efs.csi.aws.com/cluster": "true"
+        }
+      }
+    },
+    {
+      "Sid": "VertexEFSDeleteAccessPoint",
+      "Effect": "Allow",
+      "Action": "elasticfilesystem:DeleteAccessPoint",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/efs.csi.aws.com/cluster": "true"
+        }
+      }
+    },
+    {
+      "Sid": "VertexEFSNetworking",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeSubnets",
+        "ec2:CreateNetworkInterface",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DeleteNetworkInterface",
+        "ec2:ModifyNetworkInterfaceAttribute",
+        "ec2:DescribeNetworkInterfaceAttribute"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VertexSSMMessages",
+      "Effect": "Allow",
+      "Action": [
+        "ssmmessages:CreateControlChannel",
+        "ssmmessages:CreateDataChannel",
+        "ssmmessages:OpenControlChannel",
+        "ssmmessages:OpenDataChannel"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VertexECRPullOnly",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken",
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:BatchGetImage",
+        "ecr:DescribeImages"
+      ],
+      "Resource": [
+        "arn:aws-us-gov:ecr:us-gov-west-1:102015676567:repository/vertex/*"
+      ]
+    }
+  ]
+}

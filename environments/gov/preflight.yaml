@@ -1,0 +1,131 @@
+checks:
+  - name: KMS decrypt on Vertex key
+    action: kms:Decrypt
+    resource: arn:aws-us-gov:kms:us-gov-west-1:102015676567:key/11111111-2222-3333-4444-555555555555
+    expect: allowed
+
+  - name: CloudWatch metric publish
+    action: cloudwatch:PutMetricData
+    resource: "*"
+    expect: allowed
+
+  - name: X-Ray telemetry
+    action: xray:PutTelemetryRecords
+    resource: "*"
+    expect: allowed
+
+  - name: SQS receive on Vertex queue
+    action: sqs:ReceiveMessage
+    resource: arn:aws-us-gov:sqs:us-gov-west-1:102015676567:vertex-control-plane
+    expect: allowed
+
+  - name: DynamoDB leader registry update
+    action: dynamodb:UpdateItem
+    resource: arn:aws-us-gov:dynamodb:us-gov-west-1:102015676567:table/vertex-prod-AWSEBWorkerCronLeaderRegistry
+    expect: allowed
+
+  - name: Vertex log stream write
+    action: logs:PutLogEvents
+    resource: arn:aws-us-gov:logs:us-gov-west-1:102015676567:log-group:/aws/spectrocloud/vertex/cluster
+    expect: allowed
+
+  - name: CloudTrail logs remain denied
+    action: logs:GetLogEvents
+    resource: arn:aws-us-gov:logs:us-gov-west-1:102015676567:log-group:CloudtrailSensitive
+    expect: denied
+
+  - name: RDS describe Vertex DB
+    action: rds:DescribeDBInstances
+    resource: arn:aws-us-gov:rds:us-gov-west-1:102015676567:db:vertex-primary
+    expect: allowed
+
+  - name: Read Vertex instance profile
+    action: iam:GetInstanceProfile
+    resource: arn:aws-us-gov:iam::102015676567:instance-profile/vertex-workers
+    expect: allowed
+
+  - name: Assume elastic logstash role
+    action: sts:AssumeRole
+    resource: arn:aws-us-gov:iam::102015676567:role/elastic-logstash-sqs
+    expect: allowed
+
+  - name: ECS start task
+    action: ecs:StartTask
+    resource: "*"
+    expect: allowed
+
+  - name: ECR describe Vertex repo images
+    action: ecr:DescribeImages
+    resource: arn:aws-us-gov:ecr:us-gov-west-1:102015676567:repository/vertex/agent
+    expect: allowed
+
+  - name: EC2 describe subnets
+    action: ec2:DescribeSubnets
+    resource: "*"
+    expect: allowed
+
+  - name: Tagged secret read
+    action: secretsmanager:GetSecretValue
+    resource: arn:aws-us-gov:secretsmanager:us-gov-west-1:102015676567:secret:vertex/db-password
+    expect: allowed
+    context:
+      secretsmanager:ResourceTag/MISSION_SYSTEM_OWNED: "true"
+
+  - name: EC2 messages reply
+    action: ec2messages:SendReply
+    resource: "*"
+    expect: allowed
+
+  - name: SSM parameter read
+    action: ssm:GetParameter
+    resource: "*"
+    expect: allowed
+
+  - name: Vertex object write
+    action: s3:PutObject
+    resource: arn:aws-us-gov:s3:::vertex-artifacts/cluster/bootstrap.sh
+    expect: allowed
+
+  - name: Restricted CloudTrail bucket denied
+    action: s3:GetObject
+    resource: arn:aws-us-gov:s3:::cloudtrail-audit/logfile
+    expect: denied
+
+  - name: SNS publish to Vertex topic
+    action: sns:Publish
+    resource: arn:aws-us-gov:sns:us-gov-west-1:102015676567:vertex-events
+    expect: allowed
+
+  - name: Pass ECS task role
+    action: iam:PassRole
+    resource: arn:aws-us-gov:iam::102015676567:role/aws-ecs-tasks-role
+    expect: allowed
+
+  - name: Describe EFS file systems
+    action: elasticfilesystem:DescribeFileSystems
+    resource: "*"
+    expect: allowed
+
+  - name: Create EFS access point with cluster tag
+    action: elasticfilesystem:CreateAccessPoint
+    resource: "*"
+    expect: allowed
+    context:
+      aws:RequestTag/efs.csi.aws.com/cluster: "true"
+
+  - name: Delete EFS access point with cluster tag
+    action: elasticfilesystem:DeleteAccessPoint
+    resource: "*"
+    expect: allowed
+    context:
+      aws:ResourceTag/efs.csi.aws.com/cluster: "true"
+
+  - name: SSM messages control channel
+    action: ssmmessages:CreateControlChannel
+    resource: "*"
+    expect: allowed
+
+  - name: ECR pull image
+    action: ecr:BatchGetImage
+    resource: arn:aws-us-gov:ecr:us-gov-west-1:102015676567:repository/vertex/agent
+    expect: allowed
